@@ -32,10 +32,12 @@ const OtpModal = ({
   const [isOpen, setIsOpen] = useState(true);
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null); // Error state for invalid code
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null); // Reset error state before submitting
 
     console.log({ accountId, password });
 
@@ -47,6 +49,7 @@ const OtpModal = ({
       if (sessionId) router.push("/");
     } catch (error) {
       console.log("Failed to verify OTP", error);
+      setError("The code you entered is incorrect. Please check and try again."); // Set error message
     }
 
     setIsLoading(false);
@@ -87,6 +90,9 @@ const OtpModal = ({
             <InputOTPSlot index={5} className="shad-otp-slot" />
           </InputOTPGroup>
         </InputOTP>
+
+        {/* Display error message if OTP is invalid */}
+        {error && <div className="text-red-600 text-center mt-2">{error}</div>}
 
         <AlertDialogFooter>
           <div className="flex w-full flex-col gap-4">
