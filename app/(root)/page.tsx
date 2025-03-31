@@ -9,18 +9,18 @@ import { Thumbnail } from "@/components/Thumbnail";
 import { Separator } from "@/components/ui/separator";
 import { getFiles, getTotalSpaceUsed } from "@/lib/actions/file.actions";
 import { convertFileSize, getUsageSummary } from "@/lib/utils";
-import { getSession } from "@/lib/actions/auth.actions";
+import { getCurrentUser } from "@/lib/actions/user.actions"; // ✅ Fixed import
 import { redirect } from "next/navigation";
 
 const Dashboard = async () => {
-  // Retrieve session
-  const session = await getSession();
-  
-  console.log("Session Data:", session); // Debugging session data
+  // Retrieve user session
+  const user = await getCurrentUser();
 
-  if (!session) {
-    console.error("Session is missing or expired.");
-    redirect("/login"); // Redirects user to login page
+  console.log("User Data:", user); // Debugging session data
+
+  if (!user) {
+    console.error("User not found or session expired.");
+    redirect("/sign-in"); // ✅ Redirect to sign-in page
     return null;
   }
 
