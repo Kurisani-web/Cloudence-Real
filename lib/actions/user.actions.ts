@@ -97,19 +97,33 @@ export const getCurrentUser = async () => {
   try {
     const { databases, account } = await createSessionClient();
 
+    // Debugging: Check if cookies exist
+    const sessionCookie = cookies().get("appwrite-session");
+    console.log("Session Cookie:", sessionCookie);
+
+    if (!sessionCookie) {
+      console.error("Session cookie is missing!");
+      return null;
+    }
+
     const result = await account.get();
+    console.log("Account Result:", result);
 
     const user = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.usersCollectionId,
-      [Query.equal("accountId", result.$id)],
+      [Query.equal("accountId", result.$id)]
     );
 
-    if (user.total <= 0) return null;
+    if (user.total <= 0) {
+      console.error("User document not found in database.");
+      return null;
+    }
 
     return parseStringify(user.documents[0]);
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching current user:", error);
+    return null;
   }
 };
 
